@@ -16,7 +16,7 @@ import pandas as pd
 
 TENANT_ID = "1fd54b8d-ac86-436d-8e57-0b88a2805609"
 CLIENT_ID = "d3590ed6-52b3-4102-aeff-aad2292ab01c"
-VALID_SHIFTS = {"SD", "SN", "P"}
+VALID_SHIFTS = {"SN", "P"}
 
 
 def get_token():

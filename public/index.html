@@ -145,8 +145,8 @@
 <script>
 let escalaData = null;
 
-const SHIFT_LABELS = { SD: 'Servico diurno', SN: 'Servico noturno', P: 'Plantao 24h' };
-const SHIFT_ORDER = ['SD', 'SN', 'P'];
+const SHIFT_LABELS = { SN: 'Servico noturno', P: 'Plantao 24h' };
+const SHIFT_ORDER = ['SN', 'P'];
 
 async function loadData() {
   const content = document.getElementById('content');
@@ -169,19 +169,17 @@ function render() {
   const d = escalaData;
   document.getElementById('dateDisplay').textContent = 'Hospital Costa dos Coqueiros — ' + d.data_formatada;
 
-  let totalSD = 0, totalSN = 0, totalP = 0, totalGeral = 0;
+  let totalSN = 0, totalP = 0, totalGeral = 0;
   for (const setor in d.setores) {
     for (const prof of d.setores[setor]) {
       totalGeral++;
-      if (prof.plantao === 'SD') totalSD++;
       if (prof.plantao === 'SN') totalSN++;
       if (prof.plantao === 'P') totalP++;
     }
   }
 
-  let html = '<div class="stats">' +
+  let html = '<div class="stats" style="grid-template-columns: repeat(3, 1fr);">' +
     '<div class="stat-card"><div class="label">Total</div><div class="value">' + totalGeral + '</div></div>' +
-    '<div class="stat-card"><div class="label">SD</div><div class="value" style="color:#1e40af">' + totalSD + '</div></div>' +
     '<div class="stat-card"><div class="label">SN</div><div class="value" style="color:#5b21b6">' + totalSN + '</div></div>' +
     '<div class="stat-card"><div class="label">P 24h</div><div class="value" style="color:#92400e">' + totalP + '</div></div>' +
     '</div>';
