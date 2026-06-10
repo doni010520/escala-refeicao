@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+_test_auth.py
+_escala_temp.xlsx
+.vercel
+node_modules
