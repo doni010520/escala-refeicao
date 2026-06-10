@@ -216,10 +216,10 @@ function render() {
 function exportPDF() {
   if (!escalaData) return;
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
   const d = escalaData;
-  const pageW = 210;
+  const pageW = 297;
   const marginL = 15;
   const marginR = 15;
   let y = 20;
@@ -241,7 +241,7 @@ function exportPDF() {
     const profs = d.setores[setor] || [];
     if (profs.length === 0) continue;
 
-    if (y > 260) { doc.addPage(); y = 20; }
+    if (y > 180) { doc.addPage(); y = 20; }
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
@@ -256,7 +256,7 @@ function exportPDF() {
 
     for (const shift of SHIFT_ORDER) {
       if (!byShift[shift]) continue;
-      if (y > 260) { doc.addPage(); y = 20; }
+      if (y > 180) { doc.addPage(); y = 20; }
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(10);
@@ -276,7 +276,7 @@ function exportPDF() {
       doc.setFontSize(10);
 
       for (const p of byShift[shift]) {
-        if (y > 275) { doc.addPage(); y = 20; }
+        if (y > 185) { doc.addPage(); y = 20; }
         doc.text(p.nome, marginL + 2, y);
         doc.setDrawColor(200);
         doc.line(marginL + 110, y, pageW - marginR, y);
@@ -293,7 +293,7 @@ function exportPDF() {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(150);
-    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' — Pagina ' + i + '/' + totalPages, pageW / 2, 290, { align: 'center' });
+    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' — Pagina ' + i + '/' + totalPages, pageW / 2, 200, { align: 'center' });
     doc.setTextColor(0);
   }
 
