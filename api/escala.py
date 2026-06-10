@@ -7,6 +7,7 @@ import os
 import json
 import datetime
 import base64
+import time
 import tempfile
 from http.server import BaseHTTPRequestHandler
 import msal
@@ -43,13 +44,21 @@ def download_xlsx(token):
     share_id = f"u!{encoded}"
 
     headers = {"Authorization": f"Bearer {token}"}
-    r = requests.get(
-        f"https://graph.microsoft.com/v1.0/shares/{share_id}/driveItem",
-        headers=headers,
-        timeout=15,
-    )
+
+    for attempt in range(3):
+        r = requests.get(
+            f"https://graph.microsoft.com/v1.0/shares/{share_id}/driveItem",
+            headers=headers,
+            timeout=15,
+        )
+        if r.status_code == 429:
+            retry_after = int(r.headers.get("Retry-After", 5))
+            time.sleep(retry_after)
+            continue
+        break
+
     if r.status_code != 200:
-        raise ValueError(f"Erro ao acessar arquivo: {r.status_code}")
+        raise ValueError(f"Erro ao acessar arquivo: {r.status_code} - {r.text[:200]}")
 
     item = r.json()
     dl_url = item.get("@microsoft.graph.downloadUrl")
