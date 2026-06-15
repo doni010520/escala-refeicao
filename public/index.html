@@ -144,9 +144,23 @@
 
 <script>
 let escalaData = null;
+let logoBase64 = null;
 
 const SHIFT_LABELS = { SN: 'Servico noturno', P: 'Plantao 24h' };
 const SHIFT_ORDER = ['SN', 'P'];
+
+(function loadLogo() {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() {
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0);
+    logoBase64 = c.toDataURL('image/png');
+  };
+  img.src = 'logo-fesfsus.png';
+})();
 
 async function loadData() {
   const content = document.getElementById('content');
@@ -244,13 +258,19 @@ function drawMealPage(doc, mealName, profs, data_formatada) {
 
   let y = 15;
 
-  // Cabeçalho FESF-SUS
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text('FESF-SUS', marginL, y);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.text('Fundacao Estatal Saude da Familia', marginL, y + 4);
+  // Logo FESF-SUS
+  if (logoBase64) {
+    const logoH = 12;
+    const logoW = logoH * (1580 / 460);
+    doc.addImage(logoBase64, 'PNG', marginL, y - 6, logoW, logoH);
+  } else {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('FESF-SUS', marginL, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('Fundacao Estatal Saude da Familia', marginL, y + 4);
+  }
 
   // Data no canto direito
   doc.setFont('helvetica', 'normal');
