@@ -170,14 +170,11 @@ class handler(BaseHTTPRequestHandler):
             token = get_token()
             fp = download_xlsx(token)
 
-            is_weekday = today.weekday() < 5
-
             data = {
                 "data": today.isoformat(),
                 "dia": day,
                 "data_formatada": today.strftime("%d/%m/%Y"),
                 "setores": {},
-                "adm": load_adm() if is_weekday else [],
             }
 
             for sheet in ["TECNICOS", "ENFERMEIRAS", "CME"]:
