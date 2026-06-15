@@ -80,6 +80,31 @@ def download_xlsx(token):
     return tmp.name
 
 
+def load_adm():
+    adm_path = os.path.join(os.path.dirname(__file__), "colaboradores.xlsx")
+    if not os.path.exists(adm_path):
+        return []
+    df = pd.read_excel(adm_path, header=0)
+    df.columns = [c.strip() for c in df.columns]
+    sit_col = [c for c in df.columns if "SITUA" in c][0]
+    result = []
+    for _, row in df.iterrows():
+        cargo = str(row["CARGO"]).strip()
+        situacao = str(row[sit_col]).strip()
+        if situacao != "ATIVO":
+            continue
+        if "ENFERMAG" in cargo.upper() or "ENFERMEIRO" in cargo.upper():
+            continue
+        nome = str(row["NOME"]).strip()
+        result.append({
+            "nome": nome,
+            "cargo": cargo,
+            "jornada": int(row["JORNADA"]),
+        })
+    result.sort(key=lambda x: x["nome"])
+    return result
+
+
 def find_table(df):
     hr = None
     for i, row in df.iterrows():
@@ -145,11 +170,14 @@ class handler(BaseHTTPRequestHandler):
             token = get_token()
             fp = download_xlsx(token)
 
+            is_weekday = today.weekday() < 5
+
             data = {
                 "data": today.isoformat(),
                 "dia": day,
                 "data_formatada": today.strftime("%d/%m/%Y"),
                 "setores": {},
+                "adm": load_adm() if is_weekday else [],
             }
 
             for sheet in ["TECNICOS", "ENFERMEIRAS", "CME"]:

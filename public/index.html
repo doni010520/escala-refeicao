@@ -191,11 +191,13 @@ function render() {
       if (prof.plantao === 'P') totalP++;
     }
   }
+  const totalADM = (d.adm || []).length;
 
-  let html = '<div class="stats" style="grid-template-columns: repeat(3, 1fr);">' +
-    '<div class="stat-card"><div class="label">Total</div><div class="value">' + totalGeral + '</div></div>' +
+  let html = '<div class="stats">' +
+    '<div class="stat-card"><div class="label">Escala</div><div class="value">' + totalGeral + '</div></div>' +
     '<div class="stat-card"><div class="label">SN</div><div class="value" style="color:#5b21b6">' + totalSN + '</div></div>' +
     '<div class="stat-card"><div class="label">P 24h</div><div class="value" style="color:#92400e">' + totalP + '</div></div>' +
+    '<div class="stat-card"><div class="label">ADM</div><div class="value" style="color:#047857">' + totalADM + '</div></div>' +
     '</div>';
 
   for (const setor of ['TECNICOS', 'ENFERMEIRAS', 'CME']) {
@@ -222,6 +224,18 @@ function render() {
       html += '</ul></div>';
     }
     html += '</div>';
+  }
+
+  // Seção ADM
+  const admList = d.adm || [];
+  if (admList.length > 0) {
+    html += '<div class="setor"><div class="setor-header"><h2>ADMINISTRATIVO</h2>' +
+      '<span class="setor-count">' + admList.length + ' profissional(is)</span></div>';
+    html += '<div class="shift-group"><div class="shift-badge" style="background:#d1fae5;color:#047857;">ADM — Horario comercial</div><ul class="prof-list">';
+    for (const p of admList) {
+      html += '<li><span class="prof-name">' + p.nome + '</span> <span class="prof-lotacao">(' + p.cargo + ')</span></li>';
+    }
+    html += '</ul></div></div>';
   }
 
   document.getElementById('content').innerHTML = html;
@@ -388,6 +402,15 @@ function exportPDF() {
     for (const meal of meals) {
       if (!mealProfs[meal]) mealProfs[meal] = [];
       mealProfs[meal].push(p);
+    }
+  }
+
+  // ADM → só almoço
+  const admList = (d.adm || []);
+  if (admList.length > 0) {
+    if (!mealProfs['Almoco']) mealProfs['Almoco'] = [];
+    for (const a of admList) {
+      mealProfs['Almoco'].push({ nome: a.nome, lotacao: a.cargo, plantao: 'ADM' });
     }
   }
 
